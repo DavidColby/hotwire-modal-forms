@@ -1,22 +1,30 @@
-<%= form_with(model: comment) do |form| %>
-  <% if comment.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+<%= turbo_frame_tag "comment_form" do %>
+  <%= form_with(model: @comment, id: "comment_form", data: { extended_modal_target: 'form' }) do |form| %>
+    <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+      <% if @comment.errors.any? %>
+        <div class="p-4 border-red-600">
+          <h2>
+            Could not save comment
+          </h2>
+          <ul>
+            <% @comment.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
 
-      <ul>
-        <% comment.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+      <div class="form-group">
+        <%= form.label :body %>
+        <%= form.text_field :body %>
+      </div>
+
+    </div>
+    <div class="rounded-b mt-6 px-4 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+      <%= form.button class: "w-full sm:col-start-2 bg-blue-600 px-4 py-2 mb-4 text-white rounded-sm hover:bg-blue-700" %>
+      <button data-action="click->extended-modal#close" class="mt-3 w-full sm:mt-0 sm:col-start-1 mb-4 bg-gray-100 hover:bg-gray-200 rounded-sm px-4 py-2">
+        Cancel
+      </button>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= form.label :body %>
-    <%= form.text_field :body %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
 <% end %>

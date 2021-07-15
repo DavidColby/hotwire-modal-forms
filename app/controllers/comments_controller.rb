@@ -19,18 +19,25 @@ class CommentsController < ApplicationController
   def edit
   end
 
-  # POST /comments or /comments.json
   def create
     @comment = Comment.new(comment_params)
 
-    respond_to do |format|
-      if @comment.save
-        format.html { redirect_to @comment, notice: "Comment was successfully created." }
-        format.json { render :show, status: :created, location: @comment }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
-      end
+    if @comment.save
+      render turbo_stream: turbo_stream.append(
+        'comments',
+        partial: 'comment',
+        locals: {
+          comment: @comment
+        }
+      )
+    else
+      render turbo_stream: turbo_stream.replace(
+        'comment_form',
+        partial: 'form',
+        locals: {
+          comment: @comment
+        }
+      ), status: :unprocessable_entity
     end
   end
 
